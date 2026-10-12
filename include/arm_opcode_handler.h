@@ -6,5 +6,5 @@
 #define C_GBOYADVANCED_ARM_OPCODE_HANDLER_H
 
 #include "glossary.h"
-
+void demo();
 #endif //C_GBOYADVANCED_ARM_OPCODE_HANDLER_H

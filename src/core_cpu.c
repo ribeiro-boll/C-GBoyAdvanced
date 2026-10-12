@@ -1,10 +1,11 @@
 #include "include/core_cpu.h"
 
+//CPU_bus cpu;
 CPU_bus cpu;
-
-void startup_sequence() {
+void startup_sequence_cpu() {
     cpu.curr_mode=0;
     cpu.CPSR = 0;
+    cpu.curr_func_conditon = 0;
     cpu.curr_PC = 0;
     cpu.thumb_mode = false;
     for (int i = 0; i< 6;i++) {
@@ -14,20 +15,26 @@ void startup_sequence() {
         }
     }
 }
-void write_to_register(word_type variable, uint8_t nbr_reg) {
+void set_current_condition(byte_type cond) {
+    cpu.curr_func_conditon = cond;
+}
+byte_type get_current_condition() {
+    return cpu.curr_func_conditon;
+}
+void write_to_register(byte_type nbr_reg, word_type variable) {
     cpu.registradores[cpu.curr_mode][nbr_reg] = variable;
 }
-word_type read_register(uint8_t nbr_reg) {
+word_type read_register(byte_type nbr_reg) {
     return cpu.registradores[cpu.curr_mode][nbr_reg];
 }
-void write_to_register_thumb(half_word_type variable, uint8_t nbr_reg) {
+void write_to_register_thumb(byte_type nbr_reg, half_word_type variable) {
     cpu.registradores[cpu.curr_mode][nbr_reg] = variable;
 }
-half_word_type read_register_thumb(uint8_t nbr_reg) {
+half_word_type read_register_thumb(byte_type nbr_reg) {
     return (half_word_type)cpu.registradores[cpu.curr_mode][nbr_reg];
 }
 
-void transfer_registers_on_mode_change(uint8_t new_selected_mode) {
+void transfer_registers_on_mode_change(byte_type new_selected_mode) {
     for (int i = 0; i < 8; i++) {
         cpu.registradores[new_selected_mode][i] = cpu.registradores[cpu.curr_mode][i] ;
     }
@@ -56,7 +63,7 @@ void flip_flag_Z(bool on_or_off) {
 }
 void flip_flag_C(bool on_or_off) {
     word_type temp = cpu.CPSR;
-    cpu.CPSR = (on_or_off)? temp | 0b00100000000000000000000000000000 : temp & 0b00011111111111111111111111111111;
+    cpu.CPSR = (on_or_off)? temp | 0b00100000000000000000000000000000 : temp & 0b11011111111111111111111111111111;
 }
 void flip_flag_V(bool on_or_off) {
     word_type temp = cpu.CPSR;
@@ -64,14 +71,18 @@ void flip_flag_V(bool on_or_off) {
 }
 
 bool is_flag_N_on() {
-    return (cpu.CPSR & 4194304)? true : false;
+    return (cpu.CPSR & 0b10000000000000000000000000000000)? true : false;
 }
 bool is_flag_Z_on() {
-    return (cpu.CPSR & 2097152)? true : false;
+    return (cpu.CPSR & 0b01000000000000000000000000000000)? true : false;
 }
 bool is_flag_C_on() {
-    return (cpu.CPSR & 1048576)? true : false;
+    return (cpu.CPSR & 0b00100000000000000000000000000000)? true : false;
 }
 bool is_flag_V_on() {
-    return (cpu.CPSR & 524288)? true : false;
+    return (cpu.CPSR & 0b00010000000000000000000000000000)? true : false;
+}
+
+void write_CPSR_to_SPSR() {
+    cpu.CPSR = cpu.SPSR[cpu.curr_mode];
 }

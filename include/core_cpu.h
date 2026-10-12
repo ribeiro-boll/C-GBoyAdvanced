@@ -4,6 +4,26 @@
 #include "glossary.h"
 
 /*
+
+// CPU MODES
+
+#define USER 0
+#define FIQ 1
+#define SUPERVISOR 2
+#define ABORT 3
+#define IRQ 4
+#define UNDEFINED 5
+
+// REGISTERS DEFINITIONS
+
+#define REG_SP 13
+#define REG_LR 14
+#define REG_PC 15
+#define REG_CPSR 16
+#define REG_SPSR 17
+
+
+//--------------------------------------------------------------
 System/User FIQ       Supervisor Abort     IRQ       Undefined
   --------------------------------------------------------------
   R0          R0        R0         R0        R0        R0
@@ -30,6 +50,7 @@ System/User FIQ       Supervisor Abort     IRQ       Undefined
 */
 typedef struct CPU_bus {
     bool thumb_mode; //inicia falso
+    uint8_t curr_func_conditon; // eq, ne, cs...
     byte_type curr_mode; // 0- user | 1-FIQ | 2- supervisor | 3- abort | 4- IRQ | 5- undefined
     word_type CPSR;
     word_type curr_PC;
@@ -38,8 +59,10 @@ typedef struct CPU_bus {
 }CPU_bus;
 
 void startup_sequence_cpu();
-void write_to_register(word_type variable, uint8_t nbr_reg);
-void write_to_register_thumb(half_word_type variable, uint8_t nbr_reg);
+void write_to_register(uint8_t nbr_reg, word_type variable);
+void write_to_register_thumb(uint8_t nbr_reg, half_word_type variable);
+byte_type get_current_condition();
+void set_current_condition(byte_type cond);
 word_type read_register(uint8_t nbr_reg);
 half_word_type read_register_thumb(uint8_t nbr_reg);
 
@@ -49,10 +72,13 @@ void flip_flag_Z(bool on_or_off);
 void flip_flag_C(bool on_or_off);
 void flip_flag_V(bool on_or_off);
 
+void write_CPSR_to_SPSR();
+
 
 bool is_flag_N_on();
 bool is_flag_Z_on();
 bool is_flag_C_on();
 bool is_flag_V_on();
 
+//CPU_bus cpu;
 #endif //C_GBOYADVANCED_CPU_H

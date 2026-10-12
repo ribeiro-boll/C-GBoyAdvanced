@@ -1,12 +1,18 @@
 #ifndef C_GBOYADVANCED_GLOSSARY_H
 #define C_GBOYADVANCED_GLOSSARY_H
 #include <stdint.h>
+#include <stdbool.h>
 
 // GENERAL DEFINITIONS
 
 #define byte_type uint8_t
+#define signed_byte_type int8_t
 #define half_word_type uint16_t
+#define signed_half_word_type int16_t
 #define word_type uint32_t
+#define signed_word_type int32_t
+#define double_word_type uint64_t
+#define signed_double_word_type int64_t
 #define bytes_nmbr 8
 #define kbytes_nmbr 1024
 
